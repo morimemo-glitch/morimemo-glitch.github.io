@@ -1,35 +1,62 @@
-:root{--ink:#1f2a24;--sub:#5d6b63;--line:#e3e8e4;--bg:#fbfcfa;--accent:#2f7d5b;--accent-bg:#eaf4ee;--warn:#fff6e0}
+/* もりメモ：家計簿ノートのような、情報優先の地味なデザイン */
+:root{--ink:#222;--sub:#6b6560;--line:#e2ddd5;--paper:#faf8f4;--white:#fff;--accent:#b5441b;--tag:#f3e4d9}
 *{box-sizing:border-box}
-body{margin:0;font-family:"Hiragino Sans","Noto Sans JP",system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.8;font-size:16px}
-a{color:var(--accent)}
-.pr{font-size:12px;color:var(--sub);text-align:center;padding:4px;background:#f1f3f1}
-header{max-width:860px;margin:0 auto;padding:18px 16px 8px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
-.logo{font-weight:700;font-size:22px;text-decoration:none;color:var(--ink)}
-.tag-line{color:var(--sub);font-size:13px}
-main{max-width:860px;margin:0 auto;padding:8px 16px 40px}
-h1{font-size:24px;line-height:1.5;margin:16px 0}
-h2{font-size:20px;margin:32px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--accent-bg)}
-h3{font-size:17px;margin:24px 0 8px}
-.hero{background:var(--accent-bg);border-radius:12px;padding:20px;margin-top:8px}
-.hero h1{margin:0 0 8px;font-size:22px}
-.cards{list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
-.cards a{display:block;padding:14px;border:1px solid var(--line);border-radius:10px;background:#fff;text-decoration:none;color:var(--ink);font-weight:600}
-.cards span{display:block;font-weight:400;font-size:13px;color:var(--sub)}
-.list li{margin:6px 0}
-.meta{color:var(--sub);font-size:13px}
-.note{background:var(--accent-bg);border-radius:8px;padding:10px 14px;margin:14px 0;font-size:14px}
-.note.warn{background:var(--warn)}
-.tbl{overflow-x:auto}
-table{border-collapse:collapse;width:100%;background:#fff;font-size:14px}
-th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:middle}
-th{background:#f3f6f4;font-weight:600;white-space:nowrap}
-td.num{text-align:right;white-space:nowrap}
-td.rank{font-weight:700;color:var(--accent);text-align:center}
-td.img img{border-radius:6px;object-fit:cover}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif;font-size:16px;line-height:1.85;font-feature-settings:"palt" 0}
+a{color:var(--ink);text-underline-offset:3px;text-decoration-thickness:1px}
+a:hover{color:var(--accent)}
+.wrap{max-width:740px;margin:0 auto;padding:0 18px}
+
+header.site{border-bottom:1px solid var(--line);background:var(--white)}
+header.site .wrap{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:14px;padding-bottom:6px}
+.logo{font-weight:700;font-size:20px;text-decoration:none;letter-spacing:.04em}
+nav a{margin-left:16px;font-size:14px;text-decoration:none;color:var(--sub)}
+nav a:first-child{margin-left:0}
+nav a:hover{color:var(--accent)}
+.pr{font-size:11px;color:var(--sub);margin:0 auto;padding-bottom:8px}
+
+main{padding-top:8px;padding-bottom:48px}
+h1{font-size:23px;line-height:1.5;margin:18px 0 6px;font-weight:700}
+h2{font-size:18px;margin:40px 0 10px;padding-left:10px;border-left:3px solid var(--accent);line-height:1.4}
+h2 .more{font-size:13px;font-weight:400;margin-left:8px;color:var(--sub)}
+h3{font-size:16px;margin:28px 0 6px}
+p{margin:12px 0}
+ul,ol{padding-left:1.4em}
+li{margin:4px 0}
+.lead{font-size:15px;color:var(--sub);margin-top:18px}
+.meta{font-size:13px;color:var(--sub)}
+.crumb{font-size:13px;margin:16px 0 0;color:var(--sub)}
+.crumb a{color:var(--sub)}
+.aside{font-size:14px;color:var(--sub);border-left:2px solid var(--line);padding-left:12px}
+.warn{background:#fff4d6;padding:6px 10px;font-size:13px}
+.tag{display:inline-block;background:var(--tag);color:var(--accent);font-size:11px;padding:0 6px;border-radius:2px;vertical-align:2px}
+
+.event{background:var(--white);border:1px solid var(--line);border-top:3px solid var(--accent);padding:12px 16px;margin:18px 0}
+.event-label{font-size:12px;color:var(--sub)}
+.event-name{font-weight:700;font-size:18px}
+.event-date{font-variant-numeric:tabular-nums;font-size:15px}
+.event .meta{margin:6px 0 0}
+
+.tbl{overflow-x:auto;margin:10px 0}
+table{border-collapse:collapse;width:100%;background:var(--white);font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{font-size:12px;font-weight:400;color:var(--sub);border-bottom:1px solid var(--ink);white-space:nowrap}
+.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.em{font-weight:700;color:var(--accent)}
+td.n{color:var(--sub);width:2em;font-variant-numeric:tabular-nums}
 .sub{font-size:12px;color:var(--sub);margin-top:2px}
-.tag{display:inline-block;font-size:11px;padding:0 6px;border-radius:4px;background:var(--accent-bg);color:var(--accent)}
-.tag.gray{background:#eee;color:#777}
-footer{max-width:860px;margin:0 auto;padding:20px 16px 40px;border-top:1px solid var(--line);font-size:13px;color:var(--sub);text-align:center}
-.credit{margin-top:8px;font-size:12px}
-@media(max-width:560px){td.img{display:none}h1{font-size:21px}}
-.cta a{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-weight:700;padding:12px 20px;border-radius:10px}
+
+.list{list-style:none;padding:0;margin:0}
+.list li{display:flex;gap:14px;padding:9px 0;border-bottom:1px dashed var(--line);margin:0}
+.list .date{font-size:13px;color:var(--sub);white-space:nowrap;font-variant-numeric:tabular-nums;padding-top:2px}
+
+.pending{background:var(--white);border:1px dashed var(--line);padding:12px 16px;margin:12px 0}
+.pending p{margin:0 0 10px;font-size:14px}
+.btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-weight:700;font-size:15px;padding:10px 18px;border-radius:3px}
+.btn:hover{color:#fff;opacity:.9}
+
+article h1{margin-top:6px}
+footer{border-top:1px solid var(--line);padding-top:16px;padding-bottom:40px;font-size:13px;color:var(--sub)}
+footer a{color:var(--sub)}
+.credit{font-size:11px}
+@media(max-width:520px){h1{font-size:20px}nav a{margin-left:12px}.list li{flex-direction:column;gap:0}}
