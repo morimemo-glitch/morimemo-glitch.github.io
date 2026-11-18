@@ -144,6 +144,7 @@ def page(title, body, path="/", desc=""):
     return f"""<!doctype html><html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{esc(full)}</title><meta name="description" content="{esc(desc or SITE['tagline'])}">
+<meta name="google-site-verification" content="M9nelkQPmXNrqe5-9lRZwhxtoKR0AWkJAvOJi-WPGn0">
 <link rel="canonical" href="{canon}"><link rel="stylesheet" href="/assets/style.css?v={CSS_VER}">
 </head><body>
 <div class="pr">当サイトは楽天アフィリエイトを利用しています（PR）</div>
