@@ -2,6 +2,7 @@
 title: 長期保存水は「1Lあたり」で比べる｜家族の備蓄量の目安も
 date: 2026-11-20
 category: hozonsui
+section: bichiku
 description: 長期保存水を1Lあたりの価格で比べたランキングと、家族の人数に合わせた備蓄量の目安をまとめました。楽天市場の価格を毎週自動で集計しています。
 status: published
 ---
