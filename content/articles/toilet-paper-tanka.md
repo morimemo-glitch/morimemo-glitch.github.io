@@ -2,6 +2,7 @@
 title: トイレットペーパーは「ロール数」ではなく「1mあたり」で比べると安いものが分かる
 date: 2026-11-20
 category: toilet-paper
+section: tanka
 description: トイレットペーパーをまとめ買いするときは、ロール数ではなく総メートル数で割った「1mあたりの価格」で比べるのが確実です。楽天市場の価格を毎週自動で集計しています。
 status: published
 ---
