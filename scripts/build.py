@@ -4,12 +4,12 @@
   python scripts/build.py --drafts   # 確認用（下書きも含める）
 """
 import html
-import os
-import urllib.parse
 import json
+import os
 import re
 import shutil
 import sys
+import urllib.parse
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -19,7 +19,10 @@ JST = timezone(timedelta(hours=9))
 CFG = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))
 SITE = CFG["site"]
 CATS = {c["slug"]: c for c in CFG["categories"]}
+SECTIONS = {s["slug"]: s for s in CFG["sections"]}
 esc = html.escape
+CSS_VER = "3"
+WEEK = "月火水木金土日"
 
 
 # ---------- Markdown（必要最低限） ----------
@@ -69,32 +72,42 @@ def md(text: str) -> str:
             if not lst: lst = (tag, [])
             lst[1].append(m.group(3)); continue
         if s.startswith("> "):
-            flush(); out.append(f'<div class="note">{inline(s[2:])}</div>'); continue
+            flush(); out.append(f'<p class="aside">{inline(s[2:])}</p>'); continue
         if lst or table: flush()
         para.append(s.strip())
     flush()
     return "\n".join(out)
 
 
-# ---------- ランキング表 ----------
+# ---------- データ・リンク ----------
 def load_data(slug):
     p = ROOT / "data" / f"{slug}.json"
     return json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
 
 
-def fmt_unit(cat, v):
+def aff(url: str) -> str:
+    a = os.environ.get("RAKUTEN_AFFILIATE_ID", "").strip()
+    if not a:
+        return url
+    q = urllib.parse.quote(url, safe="")
+    return f"https://hb.afl.rakuten.co.jp/hgc/{urllib.parse.quote(a)}/?pc={q}&m={q}"
+
+
+def search_url(keyword: str, extra: str = "") -> str:
+    return aff("https://search.rakuten.co.jp/search/mall/" + urllib.parse.quote(keyword) + "/" + extra)
+
+
+def out_link(url, text, cls="out"):
+    return f'<a class="{cls}" href="{esc(url)}" rel="sponsored noopener" target="_blank">{esc(text)}</a>'
+
+
+def yen(v):
     return f"{v:,.2f}円" if v < 10 else f"{v:,.0f}円"
 
 
-def search_link(cat):
-    """楽天市場の検索結果へのアフィリエイトリンク（APIのデータがないときの代わり）"""
-    url = "https://search.rakuten.co.jp/search/mall/" + urllib.parse.quote(cat["keyword"]) + "/"
-    aff = os.environ.get("RAKUTEN_AFFILIATE_ID", "").strip()
-    if aff:
-        url = (f"https://hb.afl.rakuten.co.jp/hgc/{urllib.parse.quote(aff)}/?pc="
-               + urllib.parse.quote(url, safe="") + "&m=" + urllib.parse.quote(url, safe=""))
-    return (f'<p class="cta"><a href="{esc(url)}" rel="sponsored noopener" target="_blank">'
-            f'楽天市場で「{esc(cat["name"])}」を探す →</a></p>')
+def best_of(slug):
+    d = load_data(slug)
+    return d["rows"][0] if d and d.get("rows") else None
 
 
 def ranking_table(slug, n=10):
@@ -102,61 +115,78 @@ def ranking_table(slug, n=10):
     if not cat:
         return ""
     if not data:
-        return ('<div class="note">単価ランキングは準備中です。準備ができしだい、ここに自動で表示されます。</div>'
-                + search_link(cat))
+        return ('<div class="pending"><p>このランキングは、楽天の価格データを取得できるようになりしだい自動で表示されます。'
+                'それまでは楽天市場の検索結果から探せます。</p>'
+                + out_link(search_url(cat["keyword"]), f"楽天市場で「{cat['name']}」を探す", "btn") + "</div>")
     price_label = cat.get("price_label", "価格")
     rows = []
     for i, r in enumerate(data["rows"][:n], 1):
-        ship = '<span class="tag">送料無料</span>' if r["free_shipping"] else '<span class="tag gray">送料別</span>'
-        img = f'<img src="{esc(r["image"])}" alt="" loading="lazy" width="64" height="64">' if r["image"] else ""
+        ship = "送料無料" if r["free_shipping"] else "送料別"
         rev = f'★{r["review_avg"]}（{r["review_count"]:,}件）' if r.get("review_count") else ""
         rows.append(
-            f'<tr><td class="rank">{i}</td><td class="img">{img}</td>'
-            f'<td><a href="{esc(r["url"])}" rel="sponsored noopener" target="_blank">{esc(r["name"])}</a>'
-            f'<div class="sub">{esc(r["shop"])} {ship} {rev}</div></td>'
-            f'<td class="num"><strong>{fmt_unit(cat, r["unit_price"])}</strong></td>'
-            f'<td class="num">{r["price"]:,}円</td></tr>')
-    sample = '<div class="note warn">※これは動作確認用のサンプルデータです。</div>' if data.get("sample") else ""
-    return (f'{sample}<div class="tbl"><table class="rank-table"><thead><tr><th>#</th><th></th><th>商品</th>'
-            f'<th>{esc(cat["unit_label"])}</th><th>{esc(price_label)}</th></tr></thead><tbody>'
+            f'<tr><td class="n">{i}</td>'
+            f'<td>{out_link(r["url"], r["name"], "")}<div class="sub">{esc(r["shop"])}・{ship} {rev}</div></td>'
+            f'<td class="num em">{yen(r["unit_price"])}</td><td class="num">{r["price"]:,}円</td></tr>')
+    sample = '<p class="warn">※動作確認用のサンプルデータです。</p>' if data.get("sample") else ""
+    return (f'{sample}<div class="tbl"><table class="rank"><thead><tr><th>#</th><th>商品</th>'
+            f'<th class="num">{esc(cat["unit_label"])}</th><th class="num">{esc(price_label)}</th></tr></thead><tbody>'
             + "".join(rows) + "</tbody></table></div>"
-            f'<p class="meta">{esc(data["fetched_at"])} 時点の楽天市場の価格です。内容量は商品名から自動で計算しているため、'
-            '購入前に必ずショップのページで価格・内容量・送料をご確認ください。</p>')
+            f'<p class="meta">{esc(data["fetched_at"])} 時点の楽天市場の価格。内容量は商品名から自動計算しています'
+            '（<a href="/method/">計算方法</a>）。購入前にショップのページで必ず確認してください。</p>')
 
 
 def shortcode(s):
     parts = s.split(":")
     if parts[0] == "ranking":
         return ranking_table(parts[1], int(parts[2]) if len(parts) > 2 else 10)
-    if parts[0] == "updated":
-        d = load_data(parts[1])
-        return f'<p class="meta">価格更新：{esc(d["fetched_at"])}</p>' if d else ""
+    if parts[0] == "search":  # {{search:キーワード:表示名}}
+        label = parts[2] if len(parts) > 2 else parts[1]
+        return f'<p>{out_link(search_url(parts[1]), "楽天市場で「" + label + "」を探す", "btn")}</p>'
+    if parts[0] == "event":
+        return event_box(full=True)
     return ""
 
 
+def fmt_dt(s):
+    d = datetime.strptime(s, "%Y-%m-%d %H:%M")
+    return f"{d.month}月{d.day}日（{WEEK[d.weekday()]}）{d.hour}:{d.minute:02d}"
+
+
+def event_box(full=False):
+    ev = CFG.get("next_event")
+    if not ev:
+        return ""
+    status = "" if ev.get("confirmed") else '<span class="tag">予想</span>'
+    note = "" if ev.get("confirmed") else "例年の開催パターンからの予想です。公式発表が出たら更新します。"
+    link = "" if full else f' <a href="{ev["article"]}">買い回りの準備 →</a>'
+    return (f'<div class="event"><div class="event-label">次の大型セール {status}</div>'
+            f'<div class="event-name">{esc(ev["name"])}</div>'
+            f'<div class="event-date">{fmt_dt(ev["start"])} 〜 {fmt_dt(ev["end"])}</div>'
+            f'<p class="meta">{note}{link}</p></div>')
+
+
 # ---------- テンプレート ----------
-CSS_VER = "2"
-
-
 def page(title, body, path="/", desc=""):
     full = f"{title}｜{SITE['title']}" if title != SITE["title"] else f"{SITE['title']}｜{SITE['tagline']}"
     canon = SITE["url"].rstrip("/") + path
+    nav = "".join(f'<a href="/{s}/">{esc(SECTIONS[s]["name"])}</a>' for s in ("sale", "tanka", "bichiku"))
     return f"""<!doctype html><html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{esc(full)}</title><meta name="description" content="{esc(desc or SITE['tagline'])}">
 <meta name="google-site-verification" content="M9nelkQPmXNrqe5-9lRZwhxtoKR0AWkJAvOJi-WPGn0">
 <link rel="canonical" href="{canon}"><link rel="stylesheet" href="/assets/style.css?v={CSS_VER}">
 </head><body>
-<div class="pr">当サイトは楽天アフィリエイトを利用しています（PR）</div>
-<header><a class="logo" href="/">{esc(SITE['title'])}</a><span class="tag-line">{esc(SITE['tagline'])}</span></header>
-<main>{body}</main>
-<footer><a href="/about/">このサイトについて</a> ・ <a href="/privacy/">プライバシーポリシー</a>
-<div class="credit"><a href="https://webservice.rakuten.co.jp/" target="_blank" rel="noopener">Supported by Rakuten Developers</a></div></footer>
+<header class="site"><div class="wrap">
+<a class="logo" href="/">もりメモ</a><nav>{nav}</nav>
+</div><p class="pr wrap">このサイトは楽天アフィリエイトを利用しています（PR）</p></header>
+<main class="wrap">{body}</main>
+<footer class="wrap"><p><a href="/method/">価格と計算方法</a> ／ <a href="/about/">運営について</a> ／ <a href="/privacy/">プライバシーポリシー</a></p>
+<p class="credit"><a href="https://webservice.rakuten.co.jp/" target="_blank" rel="noopener">Supported by Rakuten Developers</a></p></footer>
 </body></html>"""
 
 
 def write(path, content):
-    p = OUT / path.strip("/") / "index.html" if not path.endswith(".xml") and not path.endswith(".txt") else OUT / path.strip("/")
+    p = OUT / path.strip("/") if path.endswith((".xml", ".txt")) else OUT / path.strip("/") / "index.html"
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(content, encoding="utf-8")
 
@@ -174,6 +204,24 @@ def read_md(p: Path):
     return meta, body
 
 
+def article_list(arts):
+    if not arts:
+        return '<p class="meta">記事は準備中です。</p>'
+    return '<ul class="list">' + "".join(
+        f'<li><span class="date">{esc(a["date"])}</span><a href="{a["path"]}">{esc(a["title"])}</a></li>' for a in arts) + "</ul>"
+
+
+def tanka_table(slugs):
+    rows = []
+    for s in slugs:
+        c, b = CATS[s], best_of(s)
+        val = f'<span class="em">{yen(b["unit_price"])}</span>' if b else '<span class="meta">取得待ち</span>'
+        rows.append(f'<tr><td><a href="/ranking/{s}/">{esc(c["name"])}</a></td>'
+                    f'<td class="meta">{esc(c["unit_label"])}</td><td class="num">{val}</td></tr>')
+    return ('<div class="tbl"><table class="index"><thead><tr><th>品目</th><th>単位</th>'
+            '<th class="num">いま最安</th></tr></thead><tbody>' + "".join(rows) + "</tbody></table></div>")
+
+
 def main():
     drafts = "--drafts" in sys.argv
     if OUT.exists():
@@ -187,38 +235,50 @@ def main():
         meta, body = read_md(p)
         if meta.get("status") != "published" and not drafts:
             continue
-        slug = p.stem
-        path = f"/articles/{slug}/"
-        badge = '<div class="note warn">【下書き】まだ公開されていません</div>' if meta.get("status") != "published" else ""
-        html_body = (f'<article>{badge}<h1>{esc(meta.get("title", slug))}</h1>'
-                     f'<p class="meta">{esc(meta.get("date", ""))}</p>{md(body)}</article>')
-        write(path, page(meta.get("title", slug), html_body, path, meta.get("description", "")))
-        arts.append((meta.get("date", ""), meta.get("title", slug), path, meta.get("category", "")))
+        path = f"/articles/{p.stem}/"
+        sec = SECTIONS.get(meta.get("section", ""), None)
+        badge = '<p class="warn">【下書き】まだ公開されていません</p>' if meta.get("status") != "published" else ""
+        crumb = f'<a href="/{sec["slug"]}/">{esc(sec["name"])}</a>' if sec else ""
+        upd = f'・更新 {esc(meta["updated"])}' if meta.get("updated") else ""
+        html_body = (f'<article>{badge}<p class="crumb">{crumb}</p><h1>{esc(meta.get("title", p.stem))}</h1>'
+                     f'<p class="meta">公開 {esc(meta.get("date", ""))}{upd}</p>{md(body)}</article>')
+        write(path, page(meta.get("title", p.stem), html_body, path, meta.get("description", "")))
+        arts.append({"date": meta.get("date", ""), "title": meta.get("title", p.stem), "path": path,
+                     "section": meta.get("section", "")})
         urls.append(path)
-    arts.sort(reverse=True)
+    arts.sort(key=lambda a: a["date"], reverse=True)
 
-    # ランキングページ
+    # 単価ランキング
     for slug, cat in CATS.items():
         path = f"/ranking/{slug}/"
-        body = (f'<h1>{esc(cat["name"])} {esc(cat["unit_label"])}の安さランキング</h1>'
-                f'<p>楽天市場の{esc(cat["name"])}を、{esc(cat["unit_label"])}の価格で安い順に並べています。毎週自動で更新しています。</p>'
+        body = (f'<p class="crumb"><a href="/tanka/">単価ランキング</a></p>'
+                f'<h1>{esc(cat["name"])}　{esc(cat["unit_label"])}の安い順</h1>'
+                f'<p>楽天市場の{esc(cat["name"])}を、{esc(cat["unit_label"])}の値段に直して並べています。'
+                'パッケージの大きさやロール数ではなく、中身の量で比べるので、内容量が減った「ステルス値上げ」も見抜けます。</p>'
                 + ranking_table(slug, 30))
-        write(path, page(f'{cat["name"]} {cat["unit_label"]}ランキング', body, path))
+        write(path, page(f'{cat["name"]} {cat["unit_label"]}の安い順', body, path))
+        urls.append(path)
+
+    # セクションページ
+    for s, sec in SECTIONS.items():
+        path = f"/{s}/"
+        body = f'<h1>{esc(sec["name"])}</h1><p>{esc(sec["desc"])}</p>'
+        if s == "sale":
+            body += event_box()
+        cats = [c for c in CATS if CATS[c]["section"] == s]
+        if cats:
+            body += "<h2>単価の一覧</h2>" + tanka_table(cats)
+        body += "<h2>記事</h2>" + article_list([a for a in arts if a["section"] == s])
+        write(path, page(sec["name"], body, path, sec["desc"]))
         urls.append(path)
 
     # トップ
-    groups = {}
-    for c in CATS.values():
-        groups.setdefault(c["group"], []).append(c)
-    rank_html = "".join(
-        f'<h3>{esc(g)}</h3><ul class="cards">' + "".join(
-            f'<li><a href="/ranking/{c["slug"]}/">{esc(c["name"])}<span>{esc(c["unit_label"])}</span></a></li>' for c in cs)
-        + "</ul>" for g, cs in groups.items())
-    art_html = "".join(f'<li><a href="{p}">{esc(t)}</a> <span class="meta">{esc(d)}</span></li>' for d, t, p, _ in arts) \
-        or "<li>記事は準備中です。</li>"
-    top = (f'<section class="hero"><h1>{esc(SITE["tagline"])}</h1>'
-           '<p>楽天市場の価格を毎週自動で集めて、「1mあたり」「100gあたり」など、本当にお得な単価で比べています。</p></section>'
-           f'<h2>単価ランキング</h2>{rank_html}<h2>新着記事</h2><ul class="list">{art_html}</ul>')
+    tanka_slugs = [c for c in CATS if CATS[c]["section"] in ("tanka", "bichiku")]
+    top = (f'<p class="lead">{esc(SITE["tagline"])}。楽天市場の価格を毎週集めて、'
+           '「1mあたり」「100gあたり」など中身の量あたりの値段に直しています。</p>'
+           + event_box()
+           + '<h2>単価ランキング <a class="more" href="/tanka/">すべて</a></h2>' + tanka_table(tanka_slugs)
+           + '<h2>新着記事</h2>' + article_list(arts[:10]))
     write("/", page(SITE["title"], top, "/"))
 
     # 固定ページ
@@ -228,7 +288,6 @@ def main():
         write(path, page(meta.get("title", p.stem), f'<article><h1>{esc(meta.get("title", ""))}</h1>{md(body)}</article>', path))
         urls.append(path)
 
-    # sitemap / robots
     base = SITE["url"].rstrip("/")
     today = datetime.now(JST).strftime("%Y-%m-%d")
     sm = "".join(f"<url><loc>{base}{u}</loc><lastmod>{today}</lastmod></url>" for u in urls)
