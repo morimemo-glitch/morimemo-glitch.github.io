@@ -1,0 +1,52 @@
+{
+  "site": {
+    "title": "もりメモ",
+    "tagline": "日用品を「1個あたり」で比べるメモ",
+    "url": "https://morimemo-glitch.github.io",
+    "lang": "ja"
+  },
+  "categories": [
+    {
+      "slug": "toilet-paper",
+      "name": "トイレットペーパー",
+      "group": "日用品",
+      "keyword": "トイレットペーパー",
+      "unit": "m",
+      "unit_label": "1mあたり",
+      "parse": "rolls_x_length",
+      "min_reviews": 3
+    },
+    {
+      "slug": "laundry-refill",
+      "name": "洗濯洗剤（詰め替え・液体）",
+      "group": "日用品",
+      "keyword": "洗濯洗剤 詰め替え 液体",
+      "unit": "g",
+      "unit_label": "100gあたり",
+      "unit_scale": 100,
+      "parse": "amount",
+      "min_reviews": 3
+    },
+    {
+      "slug": "hozonsui",
+      "name": "長期保存水",
+      "group": "防災・備蓄",
+      "keyword": "保存水 5年",
+      "unit": "L",
+      "unit_label": "1Lあたり",
+      "parse": "amount",
+      "min_reviews": 3
+    },
+    {
+      "slug": "furusato-kome",
+      "name": "ふるさと納税 お米",
+      "group": "ふるさと納税",
+      "keyword": "ふるさと納税 米",
+      "unit": "kg",
+      "unit_label": "寄付額 1kgあたり",
+      "parse": "amount",
+      "price_label": "寄付額",
+      "min_reviews": 3
+    }
+  ]
+}
