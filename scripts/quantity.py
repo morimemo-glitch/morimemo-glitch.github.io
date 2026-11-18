@@ -74,7 +74,22 @@ def parse_rolls_x_length(name: str, unit: str = "m"):
     return total
 
 
-PARSERS = {"amount": parse_amount, "rolls_x_length": parse_rolls_x_length}
+def parse_boxes_x_pairs(name: str, unit: str = "組"):
+    """ボックスティッシュ：「150組 5箱」「160W×60個」などから総組数を出す"""
+    s = normalize(name)
+    pairs = re.search(r"(\d{2,4})\s*(?:組|w(?![a-z]))", s)
+    boxes = re.search(r"(\d{1,3})\s*(?:箱|個|コ)(?!分)", s)
+    if not pairs or not boxes:
+        return None
+    total = int(pairs.group(1)) * int(boxes.group(1))
+    pack = re.search(r"[x×*]\s*(\d{1,2})\s*(?:パック|セット|ケース)", s)
+    if pack:
+        total *= int(pack.group(1))
+    return total
+
+
+PARSERS = {"amount": parse_amount, "rolls_x_length": parse_rolls_x_length,
+           "boxes_x_pairs": parse_boxes_x_pairs}
 
 
 def parse(name: str, kind: str, unit: str):
