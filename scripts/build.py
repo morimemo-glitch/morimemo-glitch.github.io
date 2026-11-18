@@ -4,6 +4,8 @@
   python scripts/build.py --drafts   # 確認用（下書きも含める）
 """
 import html
+import os
+import urllib.parse
 import json
 import re
 import shutil
@@ -84,10 +86,24 @@ def fmt_unit(cat, v):
     return f"{v:,.2f}円" if v < 10 else f"{v:,.0f}円"
 
 
+def search_link(cat):
+    """楽天市場の検索結果へのアフィリエイトリンク（APIのデータがないときの代わり）"""
+    url = "https://search.rakuten.co.jp/search/mall/" + urllib.parse.quote(cat["keyword"]) + "/"
+    aff = os.environ.get("RAKUTEN_AFFILIATE_ID", "").strip()
+    if aff:
+        url = (f"https://hb.afl.rakuten.co.jp/hgc/{urllib.parse.quote(aff)}/?pc="
+               + urllib.parse.quote(url, safe="") + "&m=" + urllib.parse.quote(url, safe=""))
+    return (f'<p class="cta"><a href="{esc(url)}" rel="sponsored noopener" target="_blank">'
+            f'楽天市場で「{esc(cat["name"])}」を探す →</a></p>')
+
+
 def ranking_table(slug, n=10):
     cat, data = CATS.get(slug), load_data(slug)
-    if not cat or not data:
-        return '<div class="note">データ準備中です。</div>'
+    if not cat:
+        return ""
+    if not data:
+        return ('<div class="note">単価ランキングは準備中です。準備ができしだい、ここに自動で表示されます。</div>'
+                + search_link(cat))
     price_label = cat.get("price_label", "価格")
     rows = []
     for i, r in enumerate(data["rows"][:n], 1):
@@ -119,7 +135,7 @@ def shortcode(s):
 
 
 # ---------- テンプレート ----------
-CSS_VER = "1"
+CSS_VER = "2"
 
 
 def page(title, body, path="/", desc=""):
