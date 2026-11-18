@@ -2,6 +2,7 @@
 title: 【2026年 年末】ふるさと納税のお米は「寄付額1kgあたり」で比べると選びやすい
 date: 2026-11-20
 category: furusato-kome
+section: furusato
 description: ふるさと納税でお米を選ぶときは、寄付額をお米の量で割った「寄付額1kgあたり」で比べると、どれがお得か分かりやすくなります。楽天ふるさと納税の返礼品を毎週自動で集計しています。
 status: published
 ---
