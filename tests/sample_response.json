@@ -1,0 +1,282 @@
+{
+ "toilet-paper": {
+  "Items": [
+   {
+    "itemCode": "sample:トイレットペ0",
+    "itemName": "トイレットペーパー ダブル 12ロール 30m 再生紙",
+    "itemPrice": 598,
+    "shopName": "サンプルショップ0",
+    "postageFlag": true,
+    "reviewAverage": 3.93,
+    "reviewCount": 526,
+    "itemUrl": "https://example.com/sample",
+    "affiliateUrl": "",
+    "mediumImageUrls": []
+   },
+   {
+    "itemCode": "sample:トイレットペ1",
+    "itemName": "トイレットペーパー シングル 18ロール 60m",
+    "itemPrice": 858,
+    "shopName": "サンプルショップ1",
+    "postageFlag": false,
+    "reviewAverage": 4.06,
+    "reviewCount": 4068,
+    "itemUrl": "https://example.com/sample",
+    "affiliateUrl": "",
+    "mediumImageUrls": []
+   },
+   {
+    "itemCode": "sample:トイレットペ2",
+    "itemName": "トイレットペーパー 2倍巻き ダブル 6ロール 50m ×8パック",
+    "itemPrice": 3980,
+    "shopName": "サンプルショップ2",
+    "postageFlag": false,
+    "reviewAverage": 4.56,
+    "reviewCount": 3878,
+    "itemUrl": "https://example.com/sample",
+    "affiliateUrl": "",
+    "mediumImageUrls": []
+   },
+   {
+    "itemCode": "sample:トイレットペ3",
+    "itemName": "トイレットペーパー 48ロール ダブル 25m 送料無料",
+    "itemPrice": 2780,
+    "shopName": "サンプルショップ3",
+    "postageFlag": true,
+    "reviewAverage": 4.45,
+    "reviewCount": 1729,
+    "itemUrl": "https://example.com/sample",
+    "affiliateUrl": "",
+    "mediumImageUrls": []
+   },
+   {
+    "itemCode": "sample:トイレットペ4",
+    "itemName": "トイレットペーパー シングル 96ロール 55m 業務用",
+    "itemPrice": 4980,
+    "shopName": "サンプルショップ4",
+    "postageFlag": false,
+    "reviewAverage": 3.89,
+    "reviewCount": 242,
+    "itemUrl": "https://example.com/sample",
+    "affiliateUrl": "",
+    "mediumImageUrls": []
+   },
+   {
+    "itemCode": "sample:トイレットペ5",
+    "itemName": "トイレットペーパー ダブル 12ロール 27.5m 香り付き",
+    "itemPrice": 698,
+    "shopName": "サンプルショップ5",
+    "postageFlag": false,
+    "reviewAverage": 4.69,
+    "reviewCount": 3203,
+    "itemUrl": "https://example.com/sample",
+    "affiliateUrl": "",
+    "mediumImageUrls": []
+   },
+   {
+    "itemCode": "sample:【お試し】ト6",
+    "itemName": "【お試し】トイレットペーパー 4ロール",
+    "itemPrice": 298,
+    "shopName": "サンプルショップ6",
+    "postageFlag": true,
+    "reviewAverage": 4.23,
+    "reviewCount": 27,
+    "itemUrl": "https://example.com/sample",
+    "affiliateUrl": "",
+    "mediumImageUrls": []
+   }
+  ]
+ },
+ "laundry-refill": {
+  "Items": [
+   {
+    "itemCode": "sample:洗濯洗剤 詰0",
+    "itemName": "洗濯洗剤 詰め替え 超特大 1.6kg ×6袋",
+    "itemPrice": 5980,
+    "shopName": "サンプルショップ0",
+    "postageFlag": 0,
+    "reviewAverage": 4.5,
+    "reviewCount": 2191,
+    "itemUrl": "https://example.com/sample",
+    "affiliateUrl": "",
+    "mediumImageUrls": []
+   },
+   {
+    "itemCode": "sample:液体洗剤 詰1",
+    "itemName": "液体洗剤 詰め替え 850g",
+    "itemPrice": 398,
+    "shopName": "サンプルショップ1",
+    "postageFlag": 0,
+    "reviewAverage": 4.52,
+    "reviewCount": 1884,
+    "itemUrl": "https://example.com/sample",
+    "affiliateUrl": "",
+    "mediumImageUrls": []
+   },
+   {
+    "itemCode": "sample:洗濯洗剤 詰2",
+    "itemName": "洗濯洗剤 詰め替え 2kg 大容量",
+    "itemPrice": 1280,
+    "shopName": "サンプルショップ2",
+    "postageFlag": 0,
+    "reviewAverage": 4.39,
+    "reviewCount": 847,
+    "itemUrl": "https://example.com/sample",
+    "affiliateUrl": "",
+    "mediumImageUrls": []
+   },
+   {
+    "itemCode": "sample:洗剤 詰め替3",
+    "itemName": "洗剤 詰め替え 360g ×10個",
+    "itemPrice": 3480,
+    "shopName": "サンプルショップ3",
+    "postageFlag": 0,
+    "reviewAverage": 4.7,
+    "reviewCount": 260,
+    "itemUrl": "https://example.com/sample",
+    "affiliateUrl": "",
+    "mediumImageUrls": []
+   },
+   {
+    "itemCode": "sample:洗濯洗剤 詰4",
+    "itemName": "洗濯洗剤 詰め替え 1.15kg 3個セット",
+    "itemPrice": 1890,
+    "shopName": "サンプルショップ4",
+    "postageFlag": 0,
+    "reviewAverage": 3.82,
+    "reviewCount": 4445,
+    "itemUrl": "https://example.com/sample",
+    "affiliateUrl": "",
+    "mediumImageUrls": []
+   }
+  ]
+ },
+ "hozonsui": {
+  "Items": [
+   {
+    "itemCode": "sample:保存水 5年0",
+    "itemName": "保存水 5年 2L×6本",
+    "itemPrice": 1480,
+    "shopName": "サンプルショップ0",
+    "postageFlag": 0,
+    "reviewAverage": 3.81,
+    "reviewCount": 3132,
+    "itemUrl": "https://example.com/sample",
+    "affiliateUrl": "",
+    "mediumImageUrls": []
+   },
+   {
+    "itemCode": "sample:長期保存水 1",
+    "itemName": "長期保存水 7年保存 500ml ×24本",
+    "itemPrice": 3680,
+    "shopName": "サンプルショップ1",
+    "postageFlag": 1,
+    "reviewAverage": 4.49,
+    "reviewCount": 3467,
+    "itemUrl": "https://example.com/sample",
+    "affiliateUrl": "",
+    "mediumImageUrls": []
+   },
+   {
+    "itemCode": "sample:保存水 102",
+    "itemName": "保存水 10年 2リットル 6本セット",
+    "itemPrice": 2980,
+    "shopName": "サンプルショップ2",
+    "postageFlag": 0,
+    "reviewAverage": 4.53,
+    "reviewCount": 4332,
+    "itemUrl": "https://example.com/sample",
+    "affiliateUrl": "",
+    "mediumImageUrls": []
+   },
+   {
+    "itemCode": "sample:備蓄用 保存3",
+    "itemName": "備蓄用 保存水 5年 1.5L×8本",
+    "itemPrice": 1980,
+    "shopName": "サンプルショップ3",
+    "postageFlag": 1,
+    "reviewAverage": 4.02,
+    "reviewCount": 3597,
+    "itemUrl": "https://example.com/sample",
+    "affiliateUrl": "",
+    "mediumImageUrls": []
+   },
+   {
+    "itemCode": "sample:非常用 保存4",
+    "itemName": "非常用 保存水 2L×12本 2ケース",
+    "itemPrice": 2780,
+    "shopName": "サンプルショップ4",
+    "postageFlag": 0,
+    "reviewAverage": 4.74,
+    "reviewCount": 4539,
+    "itemUrl": "https://example.com/sample",
+    "affiliateUrl": "",
+    "mediumImageUrls": []
+   }
+  ]
+ },
+ "furusato-kome": {
+  "Items": [
+   {
+    "itemCode": "sample:【ふるさと納0",
+    "itemName": "【ふるさと納税】令和8年産 コシヒカリ 10kg",
+    "itemPrice": 14000,
+    "shopName": "サンプルショップ0",
+    "postageFlag": 0,
+    "reviewAverage": 4.03,
+    "reviewCount": 1901,
+    "itemUrl": "https://example.com/sample",
+    "affiliateUrl": "",
+    "mediumImageUrls": []
+   },
+   {
+    "itemCode": "sample:【ふるさと納1",
+    "itemName": "【ふるさと納税】無洗米 5kg ×2袋",
+    "itemPrice": 13000,
+    "shopName": "サンプルショップ1",
+    "postageFlag": 0,
+    "reviewAverage": 4.48,
+    "reviewCount": 3775,
+    "itemUrl": "https://example.com/sample",
+    "affiliateUrl": "",
+    "mediumImageUrls": []
+   },
+   {
+    "itemCode": "sample:【ふるさと納2",
+    "itemName": "【ふるさと納税】ひとめぼれ 精米 20kg",
+    "itemPrice": 26000,
+    "shopName": "サンプルショップ2",
+    "postageFlag": 0,
+    "reviewAverage": 4.75,
+    "reviewCount": 186,
+    "itemUrl": "https://example.com/sample",
+    "affiliateUrl": "",
+    "mediumImageUrls": []
+   },
+   {
+    "itemCode": "sample:【ふるさと納3",
+    "itemName": "【ふるさと納税】定期便 米 5kg 6回",
+    "itemPrice": 60000,
+    "shopName": "サンプルショップ3",
+    "postageFlag": 0,
+    "reviewAverage": 4.22,
+    "reviewCount": 4568,
+    "itemUrl": "https://example.com/sample",
+    "affiliateUrl": "",
+    "mediumImageUrls": []
+   },
+   {
+    "itemCode": "sample:【ふるさと納4",
+    "itemName": "【ふるさと納税】ななつぼし 15kg",
+    "itemPrice": 19000,
+    "shopName": "サンプルショップ4",
+    "postageFlag": 0,
+    "reviewAverage": 4.72,
+    "reviewCount": 829,
+    "itemUrl": "https://example.com/sample",
+    "affiliateUrl": "",
+    "mediumImageUrls": []
+   }
+  ]
+ }
+}
