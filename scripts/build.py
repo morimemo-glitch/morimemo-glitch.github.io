@@ -21,7 +21,7 @@ SITE = CFG["site"]
 CATS = {c["slug"]: c for c in CFG["categories"]}
 SECTIONS = {s["slug"]: s for s in CFG["sections"]}
 esc = html.escape
-CSS_VER = "3"
+CSS_VER = "4"
 WEEK = "月火水木金土日"
 
 
@@ -117,16 +117,18 @@ def ranking_table(slug, n=10):
     if not data:
         return ('<div class="pending"><p>このランキングは、楽天の価格データを取得できるようになりしだい自動で表示されます。'
                 'それまでは楽天市場の検索結果から探せます。</p>'
-                + out_link(search_url(cat["keyword"]), f"楽天市場で「{cat['name']}」を探す", "btn") + "</div>")
+                + out_link(search_url(cat["keyword"]), f"楽天市場で「{cat['name']}」の価格を見る", "btn") + "</div>")
     price_label = cat.get("price_label", "価格")
     rows = []
     for i, r in enumerate(data["rows"][:n], 1):
         ship = "送料無料" if r["free_shipping"] else "送料別"
         rev = f'★{r["review_avg"]}（{r["review_count"]:,}件）' if r.get("review_count") else ""
+        badge = '<span class="best">最安</span>' if i == 1 else ""
         rows.append(
-            f'<tr><td class="n">{i}</td>'
-            f'<td>{out_link(r["url"], r["name"], "")}<div class="sub">{esc(r["shop"])}・{ship} {rev}</div></td>'
-            f'<td class="num em">{yen(r["unit_price"])}</td><td class="num">{r["price"]:,}円</td></tr>')
+            f'<tr{" class=\"top\"" if i == 1 else ""}><td class="n">{i}</td>'
+            f'<td class="item">{badge}{out_link(r["url"], r["name"], "")}<div class="sub">{esc(r["shop"])}・{ship} {rev}</div></td>'
+            f'<td class="num em" data-label="{esc(cat["unit_label"])}">{yen(r["unit_price"])}</td>'
+            f'<td class="num" data-label="{esc(price_label)}">{r["price"]:,}円</td></tr>')
     sample = '<p class="warn">※動作確認用のサンプルデータです。</p>' if data.get("sample") else ""
     return (f'{sample}<div class="tbl"><table class="rank"><thead><tr><th>#</th><th>商品</th>'
             f'<th class="num">{esc(cat["unit_label"])}</th><th class="num">{esc(price_label)}</th></tr></thead><tbody>'
@@ -141,10 +143,30 @@ def shortcode(s):
         return ranking_table(parts[1], int(parts[2]) if len(parts) > 2 else 10)
     if parts[0] == "search":  # {{search:キーワード:表示名}}
         label = parts[2] if len(parts) > 2 else parts[1]
-        return f'<p>{out_link(search_url(parts[1]), "楽天市場で「" + label + "」を探す", "btn")}</p>'
+        return f'<p>{out_link(search_url(parts[1]), "楽天市場で「" + label + "」の価格を見る", "btn")}</p>'
     if parts[0] == "event":
         return event_box(full=True)
+    if parts[0] == "verdict":
+        return verdict(parts[1])
     return ""
+
+
+def verdict(slug):
+    """記事冒頭の「先に結論」。データがあれば最安の1品、なければ検索リンク"""
+    cat, data = CATS.get(slug), load_data(slug)
+    if not cat:
+        return ""
+    if data and data.get("rows"):
+        r = data["rows"][0]
+        return ('<div class="verdict"><div class="v-label">先に結論</div>'
+                f'<p>いま楽天市場で<strong>{esc(cat["unit_label"])}がいちばん安い{esc(cat["name"])}</strong>は、'
+                f'{esc(r["name"][:40])}（{yen(r["unit_price"])}）です。</p>'
+                + out_link(r["url"], "楽天で価格と在庫を見る", "btn")
+                + f'<p class="meta">{esc(data["fetched_at"])} 時点の価格です。</p></div>')
+    return ('<div class="verdict"><div class="v-label">先に結論</div>'
+            f'<p>{esc(cat["name"])}は、パッケージの大きさではなく<strong>{esc(cat["unit_label"])}の値段</strong>で比べるのが確実です。'
+            '下の表で比べるか、楽天市場で直接探せます。</p>'
+            + out_link(search_url(cat["keyword"]), f"楽天市場で「{cat['name']}」の価格を見る", "btn") + "</div>")
 
 
 def fmt_dt(s):
