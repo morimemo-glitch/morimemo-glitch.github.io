@@ -16,6 +16,7 @@ header.site{text-align:center;padding:24px 20px 16px}
 .strip span{text-decoration:underline}
 
 .cols{display:flex;flex-wrap:wrap;gap:40px;padding:32px 0 64px}
+.wrap>main{padding:32px 0 64px}
 .cols>main{flex:999 1 600px;min-width:0}
 .side{flex:1 1 260px;display:flex;flex-direction:column;gap:24px}
 .box{background:#faf8f3;padding:20px}
@@ -34,10 +35,10 @@ header.site{text-align:center;padding:24px 20px 16px}
 .date{font-size:11px;color:#999}
 
 .hero{display:flex;flex-direction:column;gap:10px;border-top:1px solid #222;border-bottom:1px solid #ececec;padding:22px 0;margin-bottom:28px;text-decoration:none}
-.hero .t{font-size:21px;font-weight:700;line-height:1.6}
+.hero .t{font-size:20px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:700;line-height:1.6}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:24px 20px}
 .card{display:flex;flex-direction:column;gap:8px;border-top:1px solid #ececec;padding-top:14px;text-decoration:none}
-.card .t{font-size:14px;font-weight:500;line-height:1.65}
+.card .t{font-size:14px;font-weight:500;line-height:1.65;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .more{text-align:center;margin-top:32px}
 .more a{display:inline-block;border:1px solid #222;padding:10px 40px;font-size:13px;text-decoration:none}
 
