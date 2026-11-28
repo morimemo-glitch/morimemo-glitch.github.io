@@ -1,7 +1,7 @@
 """data/ と content/ からサイトを _site/ に書き出す。
 
-  python scripts/build.py            # 公開用（status: published の記事だけ）
-  python scripts/build.py --drafts   # 確認用（下書きも含める）
+python scripts/build.py           # 公開用（status: published の記事だけ）
+python scripts/build.py --drafts  # 確認用（下書きも含める）
 """
 import html
 import json
@@ -21,8 +21,12 @@ SITE = CFG["site"]
 CATS = {c["slug"]: c for c in CFG["categories"]}
 SECTIONS = {s["slug"]: s for s in CFG["sections"]}
 esc = html.escape
-CSS_VER = "4"
+CSS_VER = "5"
 WEEK = "月火水木金土日"
+FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">'
+         '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+         '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600'
+         '&family=Noto+Sans+JP:wght@400;500;700&display=swap">')
 
 
 # ---------- Markdown（必要最低限） ----------
@@ -57,6 +61,9 @@ def md(text: str) -> str:
         s = line.rstrip()
         if s.startswith("{{") and s.endswith("}}"):
             flush(); out.append(shortcode(s[2:-2])); continue
+        if s.startswith("<"):
+            # 楽天アフィリエイトが作った画像付きリンクのHTMLなどを、そのまま入れる（改変しない）
+            flush(); out.append(f'<div class="raw">{s}</div>'); continue
         if not s.strip():
             flush(); continue
         m = re.match(r"(#{2,4})\s+(.*)", s)
@@ -124,8 +131,9 @@ def ranking_table(slug, n=10):
         ship = "送料無料" if r["free_shipping"] else "送料別"
         rev = f'★{r["review_avg"]}（{r["review_count"]:,}件）' if r.get("review_count") else ""
         badge = '<span class="best">最安</span>' if i == 1 else ""
+        top = ' class="top"' if i == 1 else ""
         rows.append(
-            f'<tr{" class=\"top\"" if i == 1 else ""}><td class="n">{i}</td>'
+            f'<tr{top}><td class="n">{i}</td>'
             f'<td class="item">{badge}{out_link(r["url"], r["name"], "")}<div class="sub">{esc(r["shop"])}・{ship} {rev}</div></td>'
             f'<td class="num em" data-label="{esc(cat["unit_label"])}">{yen(r["unit_price"])}</td>'
             f'<td class="num" data-label="{esc(price_label)}">{r["price"]:,}円</td></tr>')
@@ -187,23 +195,48 @@ def event_box(full=False):
             f'<p class="meta">{note}{link}</p></div>')
 
 
+def event_strip():
+    """ヘッダー下の1行のお知らせ帯"""
+    ev = CFG.get("next_event")
+    if not ev:
+        return ""
+    yoso = "" if ev.get("confirmed") else "（予想）"
+    return (f'<a class="strip" href="{esc(ev["article"])}">{esc(ev["name"])}は{fmt_dt(ev["start"])}から{yoso}。'
+            '<span>始まる前のチェックリスト</span></a>')
+
+
 # ---------- テンプレート ----------
-def page(title, body, path="/", desc=""):
+ARTS = []  # サイドバー用（main() で入れる）
+
+
+def sidebar():
+    recent = "".join(f'<li><a href="{a["path"]}">{esc(a["title"])}</a></li>' for a in ARTS[:5])
+    return ('<aside class="side">'
+            f'<section class="box"><h2 class="hand">最近の記事</h2><ol class="nums">{recent}</ol></section>'
+            '<section class="about"><h2>もりメモについて</h2>'
+            '<p>セールのたびに迷う日用品やコスメを、1個あたりの値段と使いやすさで見比べるノートです。'
+            '価格は記事に書いた日のものです。</p><p><a href="/about/">運営について</a></p></section>'
+            '</aside>')
+
+
+def page(title, body, path="/", desc="", side=True):
     full = f"{title}｜{SITE['title']}" if title != SITE["title"] else f"{SITE['title']}｜{SITE['tagline']}"
     canon = SITE["url"].rstrip("/") + path
-    nav = "".join(f'<a href="/{s}/">{esc(SECTIONS[s]["name"])}</a>' for s in ("sale", "tanka", "bichiku"))
+    nav = "".join(f'<a href="/{s}/">{esc(sec["name"])}</a>' for s, sec in SECTIONS.items())
+    inner = f'<div class="cols"><main>{body}</main>{sidebar()}</div>' if side else f"<main>{body}</main>"
     return f"""<!doctype html><html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{esc(full)}</title><meta name="description" content="{esc(desc or SITE['tagline'])}">
 <meta name="google-site-verification" content="M9nelkQPmXNrqe5-9lRZwhxtoKR0AWkJAvOJi-WPGn0">
-<link rel="canonical" href="{canon}"><link rel="stylesheet" href="/assets/style.css?v={CSS_VER}">
+<link rel="canonical" href="{canon}">{FONTS}<link rel="stylesheet" href="/assets/style.css?v={CSS_VER}">
 </head><body>
-<header class="site"><div class="wrap">
-<a class="logo" href="/">もりメモ</a><nav>{nav}</nav>
-</div><p class="pr wrap">このサイトは楽天アフィリエイトを利用しています（PR）</p></header>
-<main class="wrap">{body}</main>
-<footer class="wrap"><p><a href="/method/">価格と計算方法</a> ／ <a href="/about/">運営について</a> ／ <a href="/privacy/">プライバシーポリシー</a></p>
-<p class="credit"><a href="https://webservice.rakuten.co.jp/" target="_blank" rel="noopener">Supported by Rakuten Developers</a></p></footer>
+<div class="topbar"><div class="wrap"><span>PR｜当サイトは楽天アフィリエイトを利用しています</span></div></div>
+<header class="site"><a class="logo" href="/">もりメモ</a><p class="tagline">{esc(SITE['tagline'])}</p></header>
+<nav class="gnav"><div class="wrap">{nav}</div></nav>
+{event_strip()}
+<div class="wrap">{inner}</div>
+<footer><div class="wrap"><a href="/method/">価格と計算方法</a><a href="/about/">運営について</a><a href="/privacy/">プライバシーポリシー</a>
+<a href="https://webservice.rakuten.co.jp/" target="_blank" rel="noopener">Supported by Rakuten Developers</a><span>© もりメモ</span></div></footer>
 </body></html>"""
 
 
@@ -226,18 +259,40 @@ def read_md(p: Path):
     return meta, body
 
 
+def dot(d):
+    return d.replace("-", ".")
+
+
+def tag(a):
+    sec = SECTIONS.get(a.get("section", ""))
+    return f'<span class="tag">{esc(sec["name"])}</span>' if sec else ""
+
+
+def new_mark(a):
+    try:
+        d = datetime.strptime(a["date"], "%Y-%m-%d").replace(tzinfo=JST)
+    except ValueError:
+        return ""
+    return '<span class="new">NEW</span>' if datetime.now(JST) - d < timedelta(days=7) else ""
+
+
 def article_list(arts):
     if not arts:
         return '<p class="meta">記事は準備中です。</p>'
-    return '<ul class="list">' + "".join(
-        f'<li><span class="date">{esc(a["date"])}</span><a href="{a["path"]}">{esc(a["title"])}</a></li>' for a in arts) + "</ul>"
+    return '<div class="grid">' + "".join(
+        f'<a class="card" href="{a["path"]}"><span class="tags">{new_mark(a)}{tag(a)}</span>'
+        f'<span class="t">{esc(a["title"])}</span><span class="date">{dot(esc(a["date"]))}</span></a>'
+        for a in arts) + "</div>"
 
 
 def tanka_table(slugs):
     rows = []
     for s in slugs:
         c, b = CATS[s], best_of(s)
-        val = f'<span class="em">{yen(b["unit_price"])}</span>' if b else '<span class="meta">取得待ち</span>'
+        if b:
+            val = f'<span class="em">{yen(b["unit_price"])}</span>'
+        else:
+            val = out_link(search_url(c["keyword"]), "楽天で見る", "")
         rows.append(f'<tr><td><a href="/ranking/{s}/">{esc(c["name"])}</a></td>'
                     f'<td class="meta">{esc(c["unit_label"])}</td><td class="num">{val}</td></tr>')
     return ('<div class="tbl"><table class="index"><thead><tr><th>品目</th><th>単位</th>'
@@ -251,30 +306,38 @@ def main():
     shutil.copytree(ROOT / "assets", OUT / "assets")
     urls = ["/"]
 
-    # 記事
-    arts = []
+    # 記事（先に一覧を作って、サイドバーで使う）
+    items = []
     for p in sorted((ROOT / "content/articles").glob("*.md")):
         meta, body = read_md(p)
         if meta.get("status") != "published" and not drafts:
             continue
+        items.append((p, meta, body))
+        ARTS.append({"date": meta.get("date", ""), "title": meta.get("title", p.stem),
+                     "path": f"/articles/{p.stem}/", "section": meta.get("section", "")})
+    ARTS.sort(key=lambda a: a["date"], reverse=True)
+
+    for p, meta, body in items:
         path = f"/articles/{p.stem}/"
-        sec = SECTIONS.get(meta.get("section", ""), None)
+        a = next(x for x in ARTS if x["path"] == path)
         badge = '<p class="warn">【下書き】まだ公開されていません</p>' if meta.get("status") != "published" else ""
-        crumb = f'<a href="/{sec["slug"]}/">{esc(sec["name"])}</a>' if sec else ""
-        upd = f'・更新 {esc(meta["updated"])}' if meta.get("updated") else ""
-        html_body = (f'<article>{badge}<p class="crumb">{crumb}</p><h1>{esc(meta.get("title", p.stem))}</h1>'
-                     f'<p class="meta">公開 {esc(meta.get("date", ""))}{upd}</p>{md(body)}</article>')
+        sec = SECTIONS.get(meta.get("section", ""))
+        crumb = f'<a href="/">ホーム</a> ＞ <a href="/{sec["slug"]}/">{esc(sec["name"])}</a>' if sec else '<a href="/">ホーム</a>'
+        upd = f'・更新 {dot(esc(meta["updated"]))}' if meta.get("updated") else ""
+        html_body = (f'<article class="post">{badge}<p class="crumb">{crumb}</p>'
+                     '<p class="prbox">PR｜この記事は楽天アフィリエイトを利用しています。価格は記事に書いた日に調べたものです。</p>'
+                     f'<p class="tags">{tag(a)}</p><h1>{esc(meta.get("title", p.stem))}</h1>'
+                     f'<p class="date">{dot(esc(meta.get("date", "")))}{upd}</p>{md(body)}'
+                     '<p class="note">価格・在庫は変わることがあります。購入前に楽天の商品ページでご確認ください。使用感には個人差があります。</p>'
+                     '</article>')
         write(path, page(meta.get("title", p.stem), html_body, path, meta.get("description", "")))
-        arts.append({"date": meta.get("date", ""), "title": meta.get("title", p.stem), "path": path,
-                     "section": meta.get("section", "")})
         urls.append(path)
-    arts.sort(key=lambda a: a["date"], reverse=True)
 
     # 単価ランキング
     for slug, cat in CATS.items():
         path = f"/ranking/{slug}/"
-        body = (f'<p class="crumb"><a href="/tanka/">単価ランキング</a></p>'
-                f'<h1>{esc(cat["name"])}　{esc(cat["unit_label"])}の安い順</h1>'
+        body = (f'<p class="crumb"><a href="/">ホーム</a> ＞ <a href="/tanka/">単価ランキング</a></p>'
+                f'<h1 class="ph">{esc(cat["name"])} {esc(cat["unit_label"])}の安い順</h1>'
                 f'<p>楽天市場の{esc(cat["name"])}を、{esc(cat["unit_label"])}の値段に直して並べています。'
                 'パッケージの大きさやロール数ではなく、中身の量で比べるので、内容量が減った「ステルス値上げ」も見抜けます。</p>'
                 + ranking_table(slug, 30))
@@ -284,30 +347,33 @@ def main():
     # セクションページ
     for s, sec in SECTIONS.items():
         path = f"/{s}/"
-        body = f'<h1>{esc(sec["name"])}</h1><p>{esc(sec["desc"])}</p>'
+        body = f'<h1 class="ph">{esc(sec["name"])}</h1><p class="lead">{esc(sec["desc"])}</p>'
         if s == "sale":
             body += event_box()
         cats = [c for c in CATS if CATS[c]["section"] == s]
         if cats:
-            body += "<h2>単価の一覧</h2>" + tanka_table(cats)
-        body += "<h2>記事</h2>" + article_list([a for a in arts if a["section"] == s])
+            body += '<h2 class="sh">単価の一覧</h2>' + tanka_table(cats)
+        body += '<h2 class="sh">記事</h2>' + article_list([a for a in ARTS if a["section"] == s])
         write(path, page(sec["name"], body, path, sec["desc"]))
         urls.append(path)
 
-    # トップ
-    tanka_slugs = [c for c in CATS if CATS[c]["section"] in ("tanka", "bichiku")]
-    top = (f'<p class="lead">{esc(SITE["tagline"])}。楽天市場の価格を毎週集めて、'
-           '「1mあたり」「100gあたり」など中身の量あたりの値段に直しています。</p>'
-           + event_box()
-           + '<h2>単価ランキング <a class="more" href="/tanka/">すべて</a></h2>' + tanka_table(tanka_slugs)
-           + '<h2>新着記事</h2>' + article_list(arts[:10]))
+    # トップ：いちばん新しい記事を大きく、残りをカードで
+    if ARTS:
+        h = ARTS[0]
+        hero = (f'<a class="hero" href="{h["path"]}"><span class="tags">{new_mark(h)}{tag(h)}</span>'
+                f'<span class="t">{esc(h["title"])}</span><span class="date">{dot(esc(h["date"]))}</span></a>')
+    else:
+        hero = ""
+    top = (hero + article_list(ARTS[1:13])
+           + ('<p class="more"><a href="/sale/">記事をもっと見る</a></p>' if len(ARTS) > 13 else ""))
     write("/", page(SITE["title"], top, "/"))
 
     # 固定ページ
     for p in (ROOT / "content/pages").glob("*.md"):
         meta, body = read_md(p)
         path = f"/{p.stem}/"
-        write(path, page(meta.get("title", p.stem), f'<article><h1>{esc(meta.get("title", ""))}</h1>{md(body)}</article>', path))
+        write(path, page(meta.get("title", p.stem),
+                         f'<article class="post"><h1>{esc(meta.get("title", ""))}</h1>{md(body)}</article>', path))
         urls.append(path)
 
     base = SITE["url"].rstrip("/")
