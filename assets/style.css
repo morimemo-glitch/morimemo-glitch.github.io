@@ -1,83 +1,83 @@
-/* もりメモ：家計簿ノートのような、情報優先の地味なデザイン */
-:root{--ink:#222;--sub:#6b6560;--line:#e2ddd5;--paper:#faf8f4;--white:#fff;--accent:#b5441b;--tag:#f3e4d9}
+/* もりメモ v5：白・黒の細線・手書き風の見出し（2026-11-28） */
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif;font-size:16px;line-height:1.85;font-feature-settings:"palt" 0}
-a{color:var(--ink);text-underline-offset:3px;text-decoration-thickness:1px}
-a:hover{color:var(--accent)}
-.wrap{max-width:740px;margin:0 auto;padding:0 18px}
+body{margin:0;background:#fff;color:#222;font-family:"Noto Sans JP",system-ui,sans-serif;font-size:15px;line-height:1.85;-webkit-text-size-adjust:100%}
+a{color:#222}a:hover{color:#8a6d3b}
+img{max-width:100%;height:auto}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
 
-header.site{border-bottom:1px solid var(--line);background:var(--white)}
-header.site .wrap{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:14px;padding-bottom:6px}
-.logo{font-weight:700;font-size:20px;text-decoration:none;letter-spacing:.04em}
-nav a{margin-left:16px;font-size:14px;text-decoration:none;color:var(--sub)}
-nav a:first-child{margin-left:0}
-nav a:hover{color:var(--accent)}
-.pr{font-size:11px;color:var(--sub);margin:0 auto;padding-bottom:8px}
+.topbar{border-bottom:1px solid #ececec;font-size:11px;color:#777;padding:6px 0}
+header.site{text-align:center;padding:24px 20px 16px}
+.logo{font-family:"Klee One",cursive;font-size:32px;letter-spacing:.12em;text-decoration:none}
+.tagline{margin:4px 0 0;font-size:12px;color:#777;letter-spacing:.08em}
+.gnav{border-top:1px solid #222;border-bottom:1px solid #ececec}
+.gnav .wrap{display:flex;flex-wrap:wrap;justify-content:center}
+.gnav a{padding:12px 16px;font-size:13px;font-weight:500;text-decoration:none}
+.strip{display:block;background:#f7f3ea;text-align:center;padding:11px 20px;font-size:13px;text-decoration:none}
+.strip span{text-decoration:underline}
 
-main{padding-top:8px;padding-bottom:48px}
-h1{font-size:23px;line-height:1.5;margin:18px 0 6px;font-weight:700}
-h2{font-size:18px;margin:40px 0 10px;padding-left:10px;border-left:3px solid var(--accent);line-height:1.4}
-h2 .more{font-size:13px;font-weight:400;margin-left:8px;color:var(--sub)}
-h3{font-size:16px;margin:28px 0 6px}
-p{margin:12px 0}
-ul,ol{padding-left:1.4em}
-li{margin:4px 0}
-.lead{font-size:15px;color:var(--sub);margin-top:18px}
-.meta{font-size:13px;color:var(--sub)}
-.crumb{font-size:13px;margin:16px 0 0;color:var(--sub)}
-.crumb a{color:var(--sub)}
-.aside{font-size:14px;color:var(--sub);border-left:2px solid var(--line);padding-left:12px}
-.warn{background:#fff4d6;padding:6px 10px;font-size:13px}
-.tag{display:inline-block;background:var(--tag);color:var(--accent);font-size:11px;padding:0 6px;border-radius:2px;vertical-align:2px}
+.cols{display:flex;flex-wrap:wrap;gap:40px;padding:32px 0 64px}
+.cols>main{flex:999 1 600px;min-width:0}
+.side{flex:1 1 260px;display:flex;flex-direction:column;gap:24px}
+.box{background:#faf8f3;padding:20px}
+.hand{font-family:"Klee One",cursive;font-size:19px;text-align:center;margin:0 0 14px;font-weight:600}
+.nums{list-style:none;margin:0;padding:0;counter-reset:n;display:flex;flex-direction:column;gap:12px}
+.nums li{counter-increment:n;display:flex;gap:10px;font-size:13px;line-height:1.6}
+.nums li::before{content:counter(n);flex:0 0 22px;height:22px;border-radius:50%;background:#222;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center}
+.nums a{text-decoration:none}
+.about{border:1px solid #ececec;padding:18px;font-size:12px;color:#555}
+.about h2{font-size:14px;margin:0 0 6px;color:#222}
+.about p{margin:0 0 6px}
 
-.event{background:var(--white);border:1px solid var(--line);border-top:3px solid var(--accent);padding:12px 16px;margin:18px 0}
-.event-label{font-size:12px;color:var(--sub)}
-.event-name{font-weight:700;font-size:18px}
-.event-date{font-variant-numeric:tabular-nums;font-size:15px}
-.event .meta{margin:6px 0 0}
+.tags{display:flex;gap:6px;align-items:center;margin:0}
+.tag{font-size:10px;border:1px solid #ccc;padding:0 6px;color:#555;line-height:1.8}
+.new{background:#f2d23c;font-size:10px;font-weight:700;padding:0 6px;line-height:1.8}
+.date{font-size:11px;color:#999}
 
-.tbl{overflow-x:auto;margin:10px 0}
-table{border-collapse:collapse;width:100%;background:var(--white);font-size:14px}
-th,td{border-bottom:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
-th{font-size:12px;font-weight:400;color:var(--sub);border-bottom:1px solid var(--ink);white-space:nowrap}
-.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
-.em{font-weight:700;color:var(--accent)}
-td.n{color:var(--sub);width:2em;font-variant-numeric:tabular-nums}
-.sub{font-size:12px;color:var(--sub);margin-top:2px}
+.hero{display:flex;flex-direction:column;gap:10px;border-top:1px solid #222;border-bottom:1px solid #ececec;padding:22px 0;margin-bottom:28px;text-decoration:none}
+.hero .t{font-size:21px;font-weight:700;line-height:1.6}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:24px 20px}
+.card{display:flex;flex-direction:column;gap:8px;border-top:1px solid #ececec;padding-top:14px;text-decoration:none}
+.card .t{font-size:14px;font-weight:500;line-height:1.65}
+.more{text-align:center;margin-top:32px}
+.more a{display:inline-block;border:1px solid #222;padding:10px 40px;font-size:13px;text-decoration:none}
 
-.list{list-style:none;padding:0;margin:0}
-.list li{display:flex;gap:14px;padding:9px 0;border-bottom:1px dashed var(--line);margin:0}
-.list .date{font-size:13px;color:var(--sub);white-space:nowrap;font-variant-numeric:tabular-nums;padding-top:2px}
+.crumb{font-size:11px;color:#888;margin:0 0 12px}
+.crumb a{color:#888}
+.ph{font-size:24px;margin:0 0 8px}
+.lead{color:#555}
+.sh,.post h2{font-size:19px;padding-bottom:8px;border-bottom:2px solid #222;margin:36px 0 16px}
+.post{max-width:720px}
+.post h1{font-size:26px;line-height:1.6;margin:8px 0 4px}
+.post h3{font-size:16px;margin:24px 0 8px}
+.post p{margin:0 0 18px;line-height:2}
+.prbox{font-size:12px!important;color:#555;background:#f6f6f6;padding:8px 12px;line-height:1.7!important}
+.note{font-size:12px!important;color:#888;line-height:1.8!important;margin-top:32px!important}
+.aside{background:#fcfaf5;border:1px solid #e3ddd0;padding:14px 18px}
+.raw{margin:0 0 18px}
+.warn{color:#9a3d12;font-size:13px}
+.meta{font-size:12px;color:#777}
 
-.pending{background:var(--white);border:1px dashed var(--line);padding:12px 16px;margin:12px 0}
-.pending p{margin:0 0 10px;font-size:14px}
-.btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-weight:700;font-size:15px;padding:10px 18px;border-radius:3px}
-.btn:hover{color:#fff;opacity:.9}
+.tbl{overflow-x:auto;margin:0 0 20px}
+table{width:100%;border-collapse:collapse;font-size:13px;line-height:1.7}
+th{background:#faf8f3;text-align:left;padding:10px;border-bottom:1px solid #ddd;white-space:nowrap}
+td{padding:10px;border-bottom:1px solid #eee;vertical-align:top}
+.num{text-align:right;white-space:nowrap}
+.em{font-weight:700}
+.best{background:#222;color:#fff;font-size:10px;padding:0 6px;margin-right:6px}
+.sub{font-size:11px;color:#888}
 
-article h1{margin-top:6px}
-footer{border-top:1px solid var(--line);padding-top:16px;padding-bottom:40px;font-size:13px;color:var(--sub)}
-footer a{color:var(--sub)}
-.credit{font-size:11px}
-@media(max-width:520px){h1{font-size:20px}nav a{margin-left:12px}.list li{flex-direction:column;gap:0}}
+.btn{display:inline-block;background:#bf0000;color:#fff!important;text-decoration:none;font-size:14px;font-weight:700;padding:12px 22px;border-radius:4px}
+.pending,.verdict,.event{border:1px solid #e3ddd0;background:#fcfaf5;padding:16px 18px;margin:0 0 20px}
+.v-label,.event-label{font-family:"Klee One",cursive;font-size:16px}
+.event-name{font-weight:700;font-size:17px}
 
-/* 先に結論 */
-.verdict{background:var(--white);border:1px solid var(--line);border-left:4px solid var(--accent);padding:12px 16px;margin:18px 0}
-.v-label{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.05em}
-.verdict p{margin:6px 0 10px}
-.verdict .meta{margin:8px 0 0}
-/* 最安の印 */
-.best{display:inline-block;background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:0 6px;border-radius:2px;margin-right:6px;vertical-align:2px}
-tr.top td{background:#fdf6f1}
-/* スマホ：ランキング表をカード表示に */
-@media(max-width:560px){
-  table.rank thead{display:none}
-  table.rank,table.rank tbody,table.rank tr,table.rank td{display:block;width:100%}
-  table.rank tr{border:1px solid var(--line);background:var(--white);margin:0 0 10px;padding:10px 12px;position:relative}
-  table.rank tr.top{border-color:var(--accent)}
-  table.rank td{border:0;padding:2px 0}
-  table.rank td.n{position:absolute;top:10px;right:12px;width:auto}
-  table.rank td.item{padding-right:2em}
-  table.rank td.num{text-align:left;display:flex;justify-content:space-between}
-  table.rank td.num::before{content:attr(data-label);color:var(--sub);font-weight:400;font-size:12px}
+footer{border-top:1px solid #ececec;font-size:11px;color:#888}
+footer .wrap{display:flex;flex-wrap:wrap;gap:18px;padding:24px 20px}
+footer a{color:#888}
+
+@media (max-width:600px){
+  .rank thead{display:none}
+  .rank tr{display:block;border-bottom:1px solid #eee;padding:8px 0}
+  .rank td{display:block;border:0;padding:2px 0;text-align:left}
+  .rank td[data-label]::before{content:attr(data-label)"：";color:#888}
 }
