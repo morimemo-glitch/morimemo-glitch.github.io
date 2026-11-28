@@ -21,7 +21,7 @@ SITE = CFG["site"]
 CATS = {c["slug"]: c for c in CFG["categories"]}
 SECTIONS = {s["slug"]: s for s in CFG["sections"]}
 esc = html.escape
-CSS_VER = "5"
+CSS_VER = "6"
 WEEK = "月火水木金土日"
 FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">'
          '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
@@ -366,7 +366,7 @@ def main():
         hero = ""
     top = (hero + article_list(ARTS[1:13])
            + ('<p class="more"><a href="/sale/">記事をもっと見る</a></p>' if len(ARTS) > 13 else ""))
-    write("/", page(SITE["title"], top, "/"))
+    write("/", page(SITE["title"], top, "/", side=False))
 
     # 固定ページ
     for p in (ROOT / "content/pages").glob("*.md"):
